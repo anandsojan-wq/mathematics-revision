@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MATHEMATICS FLASHCARD</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            /* Theme Colors extracted from screenshot */
+            --bg-purple: #706fd3;
+            --dot-color: #7efff5;
+            --card-bg: #ffffff;
+            --accent-yellow: #ffda79;
+            --accent-border: #2c2c54;
+            --text-dark: #2d3436;
+            --border-width: 2px;
+            --shadow-offset: 4px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            
+            /* Polka Dot Background Pattern */
+            background-color: var(--bg-purple);
+            background-image: radial-gradient(var(--dot-color) 15%, transparent 16%), radial-gradient(var(--dot-color) 15%, transparent 16%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            width: 100%;
+            background: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom: var(--border-width) solid black;
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* --- MAIN GAME CONTAINER --- */
+        #game-wrapper {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            perspective: 1000px;
+            padding: 20px;
+        }
+
+        .card-frame {
+            position: absolute;
+            width: 90%;
+            max-width: 350px;
+            height: 480px; /* Fixed height for consistency */
+            background: white;
+            border: var(--border-width) solid black;
+            border-radius: 20px;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            backface-visibility: hidden;
+        }
+
+        /* Start Screen specific styling */
+        #start-screen {
+            z-index: 20;
+            background: white;
+            border: var(--border-width) solid #2dd4bf; /* Teal border from welcome box */
+        }
+        
+        .welcome-text {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .user-name {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+        }
+
+        /* Concept Title */
+        .concept-title {
+            background: #f1f2f6;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            color: #57606f;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+        }
+
+        /* Formula Display */
+        .formula-display {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin: 20px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Helper Text */
+        .helper-text {
+            color: #a4b0be;
+            font-weight: 600;
+            margin-top: auto;
+            margin-bottom: 10px;
+        }
+
+        /* --- BUTTONS --- */
+        .btn-primary {
+            background: var(--accent-yellow);
+            color: black;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            padding: 15px 40px;
+            border: var(--border-width) solid black;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px black;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.1s, box-shadow 0.1s;
+            width: 80%;
+        }
+
+        .btn-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px black;
+        }
+        
+        .btn-primary:disabled {
+            background: #dfe6e9;
+            color: #b2bec3;
+            border-color: #b2bec3;
+            box-shadow: none;
+        }
+
+        /* Game Controls (Yes/No) */
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            z-index: 50;
+        }
+
+        .btn-control {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: var(--border-width) solid black;
+            box-shadow: 3px 3px 0px black;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .btn-no { background: #ff7675; color: white; } /* Redish */
+        .btn-yes { background: #55efc4; color: black; } /* Tealish */
+        
+        .btn-control:active { transform: scale(0.95) translate(2px, 2px); box-shadow: 1px 1px 0 black; }
+
+        /* --- FOOTER --- */
+        footer {
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            color: white; /* White text on purple bg */
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: transparent; /* Let the dots show through */
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+        }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-box {
+            background: white;
+            width: 85%;
+            max-width: 320px;
+            padding: 25px;
+            border-radius: 20px;
+            border: var(--border-width) solid black;
+            box-shadow: 6px 6px 0px black;
+            text-align: center;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title { font-size: 1.5rem; font-weight: 900; margin-top: 0; }
+        .text-danger { color: #d63031; }
+        .text-success { color: #00b894; }
+
+        .correct-box {
+            background: #dff9fb;
+            border: 2px dashed #22a6b3;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 15px 0;
+            color: #2c2c54;
+        }
+
+        /* MathJax adjustments */
+        mjx-container { font-size: 115% !important; outline: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>MATHEMATICS FLASHCARD</h1>
+    </header>
+
+    <div id="game-wrapper">
+        
+        <div style="margin-bottom: 20px; background: white; padding: 5px 20px; border: 2px solid black; border-radius: 20px; font-weight: 800; box-shadow: 2px 2px 0 black;">
+            Score: <span id="score">0</span> / 10
+        </div>
+
+        <div id="start-screen" class="card-frame">
+            <div class="user-name">👋 Hello</div>
+            <p style="color:#666; margin-bottom: 40px; line-height: 1.5;">
+                Get ready for 10 random maths formulas.<br>Swipe or click to verify them.
+            </p>
+            <button class="btn-primary" onclick="startGame()">LET'S GO! ▶</button>
+        </div>
+
+        <div id="card-container"></div>
+
+    </div>
+
+    <div class="controls" id="controls" style="display:none;">
+        <div class="btn-control btn-no" onclick="handleInput(false)">✖</div>
+        <div class="btn-control btn-yes" onclick="handleInput(true)">✔</div>
+    </div>
+
+    <footer>
+        Developed by ICM Educations
+    </footer>
+
+    <div id="modal-correction" class="modal-overlay">
+        <div class="modal-box">
+            <h2 class="modal-title text-danger">Oops!</h2>
+            <p>That was incorrect.</p>
+            <p>The correct formula for <br><b id="modal-concept"></b> is:</p>
+            <div class="correct-box">
+                <div id="modal-formula"></div>
+            </div>
+            <button class="btn-primary" onclick="closeModal()" style="font-size: 1rem; padding: 10px 20px;">Next Card</button>
+        </div>
+    </div>
+
+    <div id="modal-finish" class="modal-overlay">
+        <div class="modal-box">
+            <h2 class="modal-title text-success">Quiz Complete!</h2>
+            <p>You scored</p>
+            <div style="font-size: 3rem; font-weight: 900; color: var(--text-dark); margin: 10px 0;">
+                <span id="final-score-val">0</span>/10
+            </div>
+            <button class="btn-primary" onclick="location.reload()">Play Again ↺</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        // Your Google Script URL
+        const API_URL = "https://script.google.com/macros/s/AKfycbwsWm_z9g6Nj39saH4e5PE_ei49a_EeuJakOEFTiMJL2YexpklA3GMmO4SR9PL1Vk2bCQ/exec"; 
+
+        // --- STATE ---
+        let gameDeck = [];
+        let currentIndex = 0;
+        let score = 0;
+
+        // --- LOGIC ---
+        async function startGame() {
+            const btn = document.querySelector('#start-screen button');
+            const originalText = btn.innerText;
+            btn.innerText = "Loading...";
+            btn.disabled = true;
+
+            try {
+                // Fetch data
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                // Build Deck
+                gameDeck = data.map(item => {
+                    const isMatch = Math.random() < 0.5; // 50/50 chance
+                    return {
+                        concept: item.concept,
+                        display: isMatch ? item.correct_formula : item.distractor_formula,
+                        correct: item.correct_formula,
+                        isMatch: isMatch
+                    };
+                });
+
+                // UI Transition
+                document.getElementById('start-screen').style.display = 'none';
+                document.getElementById('controls').style.display = 'flex';
+                
+                renderCard();
+
+            } catch (error) {
+                console.error(error);
+                alert("Could not load questions. Check internet connection.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function renderCard() {
+            const container = document.getElementById('card-container');
+            container.innerHTML = ""; // Clear old cards
+
+            if (currentIndex >= 10) {
+                endGame();
+                return;
+            }
+
+            const data = gameDeck[currentIndex];
+
+            // Create Card Element
+            const card = document.createElement('div');
+            card.className = 'card-frame';
+            card.style.zIndex = 5;
+            card.style.animation = "popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+            
+            card.innerHTML = `
+                <div class="concept-title">${data.concept}</div>
+                <div class="formula-display">$$${data.display}$$</div>
+                <div class="helper-text">Is this formula correct?</div>
+            `;
+
+            container.appendChild(card);
+            MathJax.typesetPromise(); // Render Math
+        }
+
+        function handleInput(userSaysYes) {
+            if (currentIndex >= 10) return;
+
+            const card = gameDeck[currentIndex];
+            const isCorrect = (userSaysYes === card.isMatch);
+
+            if (isCorrect) {
+                score++;
+                document.getElementById('score').innerText = score;
+                nextCard();
+            } else {
+                showCorrection(card);
+            }
+        }
+
+        function nextCard() {
+            currentIndex++;
+            renderCard();
+        }
+
+        function showCorrection(data) {
+            const modal = document.getElementById('modal-correction');
+            document.getElementById('modal-concept').innerText = data.concept;
+            document.getElementById('modal-formula').innerHTML = `$$${data.correct}$$`;
+            modal.style.display = 'flex';
+            MathJax.typesetPromise();
+        }
+
+        function closeModal() {
+            document.getElementById('modal-correction').style.display = 'none';
+            nextCard();
+        }
+
+        function endGame() {
+            document.getElementById('controls').style.display = 'none';
+            document.getElementById('modal-finish').style.display = 'flex';
+            document.getElementById('final-score-val').innerText = score;
+        }
+    </script>
+</body>
+</html>
