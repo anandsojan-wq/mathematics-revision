@@ -14,7 +14,7 @@
         :root {
             /* Colors extracted from your screenshots */
             --bg-purple: #706fd3; 
-            --dot-color: #95afc0; /* Light blueish dot */
+            --dot-color: #95afc0; 
             
             --btn-red: #ff6b6b;
             --btn-green: #51cf66;
@@ -109,7 +109,7 @@
             font-weight: 600;
             color: var(--text-dark);
             outline: none;
-            appearance: none; /* Custom arrow could be added here */
+            appearance: none;
         }
 
         .btn-yellow {
@@ -269,8 +269,8 @@
 
         .modal-box {
             background: white;
-            width: 80%;
-            max-width: 300px;
+            width: 85%;
+            max-width: 320px;
             border: var(--border-width) solid black;
             border-radius: 20px;
             padding: 25px;
@@ -288,11 +288,38 @@
             background: black;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 12px 25px;
+            border-radius: 12px;
             font-weight: bold;
             margin-top: 15px;
             cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        /* Instruction List */
+        .instruction-list {
+            text-align: left;
+            margin: 15px 0;
+            padding-left: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .instruction-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .icon-box {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid black;
+            flex-shrink: 0;
         }
 
         /* MathJax Override for size */
@@ -307,7 +334,6 @@
         
         <div class="home-card">
             <div class="welcome-box">
-                <div style="font-size:0.9rem; color:#666;"></div>
                 <div style="font-size:1.4rem; font-weight:800;">👋 Hello!!!</div>
             </div>
 
@@ -321,7 +347,7 @@
                 <div class="dropdown">Mathematics</div>
             </div>
 
-            <button class="btn-yellow" onclick="goToGame()">LET'S GO! ▶</button>
+            <button class="btn-yellow" onclick="showInstructions()">LET'S GO! ▶</button>
         </div>
         
         <div class="footer" style="margin-top:auto;">Developed by ICM Educations</div>
@@ -352,6 +378,29 @@
         </div>
         
         <div class="footer">Developed by ICM Educations</div>
+    </div>
+
+    <div id="modal-instructions" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="margin-top:0; font-weight:800; color: var(--btn-yellow); -webkit-text-stroke: 1px black;">HOW TO PLAY</h2>
+            
+            <div class="instruction-list">
+                <div class="instruction-item">
+                    <div class="icon-box" style="background:white;">1</div>
+                    <span>You will see 10 Formulas.</span>
+                </div>
+                <div class="instruction-item">
+                    <div class="icon-box" style="background:var(--btn-green);">✔</div>
+                    <span>Tap <b>Check</b> if it's Correct.</span>
+                </div>
+                <div class="instruction-item">
+                    <div class="icon-box" style="background:var(--btn-red);">✖</div>
+                    <span>Tap <b>Cross</b> if it's Wrong.</span>
+                </div>
+            </div>
+
+            <button class="modal-btn" style="background:var(--btn-yellow); width:100%; border:2px solid black; box-shadow:4px 4px 0 black;" onclick="startGameFlow()">Start Now!</button>
+        </div>
     </div>
 
     <div id="modal-correction" class="modal-overlay">
@@ -387,8 +436,17 @@
         let currentIndex = 0;
         let score = 0;
 
-        // UI Transition
-        async function goToGame() {
+        // 1. Show Instructions first
+        function showInstructions() {
+            document.getElementById('modal-instructions').style.display = 'flex';
+        }
+
+        // 2. Start Game Process (Loading + Transition)
+        async function startGameFlow() {
+            // Hide instruction modal
+            document.getElementById('modal-instructions').style.display = 'none';
+
+            // Change button state to loading
             const btn = document.querySelector('.btn-yellow');
             const originalText = btn.innerText;
             btn.innerText = "Loading...";
@@ -403,7 +461,7 @@
                 await fetchDeck(); // Fetch data
                 
                 // Slide Transition
-                document.getElementById('home-screen').classList.add('hidden-screen'); // Slide Home Up/Out (Optional logic) or just hide
+                document.getElementById('home-screen').classList.add('hidden-screen'); 
                 document.getElementById('home-screen').style.transform = "translateY(-100%)";
                 
                 document.getElementById('game-screen').classList.remove('hidden-screen');
