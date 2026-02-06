@@ -5,440 +5,262 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mathematics Flashcard</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
+        /* --- UNIFIED THEME CSS --- */
         :root {
-            --bg-purple: #706fd3; 
-            --dot-color: #95afc0; 
-            
-            --btn-red: #ff6b6b;
-            --btn-green: #51cf66;
-            --btn-yellow: #feca57;
-            
-            --text-dark: #2d3436;
-            --border-width: 3px;
-            --shadow-depth: 6px; /* Slightly deeper to match screenshot */
+            --bg-color: #6c5ce7;
+            --bg-pattern: #a29bfe;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+            --btn-yellow: #f9d976;
+            --btn-red: #ff7675;
+            --btn-green: #00b894;
+            --shadow: rgba(0, 0, 0, 0.1);
         }
 
         * { box-sizing: border-box; }
 
         body {
-            font-family: 'Poppins', sans-serif;
             margin: 0;
-            height: 100dvh;
-            overflow: hidden;
-            color: var(--text-dark);
-            
-            /* Polka Dot Background */
-            background-color: var(--bg-purple);
-            background-image: radial-gradient(#a29bfe 20%, transparent 20%), radial-gradient(#a29bfe 20%, transparent 20%);
-            background-position: 0 0, 15px 15px;
-            background-size: 30px 30px;
-            
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(var(--bg-pattern) 15%, transparent 15%);
+            background-size: 25px 25px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Prevent scrolling during game */
         }
 
-        /* --- SCREEN VISIBILITY --- */
+        /* Floating Icons */
+        .floating-icon {
+            position: absolute; font-size: 3rem; opacity: 0.15; z-index: 0;
+            animation: float 8s ease-in-out infinite; pointer-events: none;
+        }
+        .icon-1 { top: 10%; left: 8%; } .icon-2 { bottom: 15%; right: 8%; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* --- SCREENS --- */
         .screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             transition: transform 0.4s ease-in-out;
-        }
-        .hidden-screen { transform: translateY(100%); }
-
-        /* --- HOME SCREEN --- */
-        #home-screen {
-            background-color: white; 
-            background: inherit; 
-            z-index: 20;
             padding: 20px;
-            /* Flexbox Centering Magic */
-            align-items: center;     /* Horizontal Center */
-            justify-content: center; /* Vertical Center */
         }
+        .hidden-screen { transform: translateY(100%); pointer-events: none; }
 
+        /* --- HOME CARD --- */
         .home-card {
-            background: white;
-            width: 100%;
-            max-width: 380px; /* Slightly wider to match reference */
-            border: var(--border-width) solid black;
-            border-radius: 25px; /* More rounded corners */
-            padding: 35px 25px;
+            position: relative; z-index: 10;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            width: 100%; max-width: 400px;
+            border-radius: 24px; padding: 35px 30px;
             text-align: center;
-            /* Hard Shadow */
-            box-shadow: var(--shadow-depth) var(--shadow-depth) 0px black;
+            box-shadow: 0 15px 35px var(--shadow);
+            border: 2px solid var(--glass-border);
         }
 
-        /* Title Styling - Flexbox for Perfect Centering */
-        .card-title {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 800; 
-            font-size: 1.6rem; /* Slightly larger */
-            color: #2d3436;
-            margin: 0 0 15px 0;
-            line-height: 1.2;
-            text-transform: uppercase;
-            
-            /* Flexbox to lock Rocket + Text together in center */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px; /* Space between rocket and text */
+        h1 { font-weight: 900; color: var(--text-main); margin: 0 0 10px 0; font-size: 24px; text-transform: uppercase; line-height: 1.2; }
+        p { font-size: 13px; color: var(--text-sub); margin-bottom: 25px; font-weight: 500; }
+
+        .label-text { display: block; text-align: left; font-size: 11px; font-weight: 800; color: var(--text-sub); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .static-input {
+            width: 100%; padding: 16px;
+            border: 2px solid rgba(0,0,0,0.1); border-radius: 14px;
+            background: rgba(255,255,255,0.5);
+            font-size: 15px; font-weight: 700; color: var(--text-main);
+            margin-bottom: 20px; text-align: left;
         }
 
-        .card-subtitle {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #636e72;
-            margin: 0 0 30px 0;
-        }
-
-        .input-group {
-            text-align: left;
-            margin-bottom: 20px;
-        }
-        
-        .input-label {
-            font-size: 0.85rem;
-            font-weight: 800; 
-            color: #b2bec3; /* Muted grey label */
-            margin-bottom: 8px;
-            display: block;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .dropdown {
-            width: 100%;
-            padding: 14px;
-            background: #e3e4e8; /* Slightly darker grey to match screenshot */
-            border: 2px solid transparent; /* No border, just background */
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: var(--text-dark);
-            outline: none;
-            appearance: none;
-            /* Custom Chevron Arrow logic could go here, but default is fine */
-        }
-
-        .btn-yellow {
+        .btn-main {
+            width: 100%; padding: 16px;
             background: var(--btn-yellow);
-            width: 100%;
-            padding: 16px;
-            font-size: 1.3rem;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 800; 
-            border: var(--border-width) solid black;
-            border-radius: 15px; /* Matching roundedness */
-            box-shadow: 4px 4px 0px black;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            border: 3px solid var(--text-main); border-radius: 16px;
+            font-weight: 800; font-size: 16px; text-transform: uppercase;
+            cursor: pointer; box-shadow: 0 6px 0 var(--text-main);
+            transition: all 0.1s; color: var(--text-main);
+            margin-top: 10px;
         }
-        .btn-yellow:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px black;
+        .btn-main:active { transform: translateY(6px); box-shadow: 0 0 0 var(--text-main); }
+
+        .back-link {
+            display: block; margin-top: 20px; font-size: 12px; color: var(--text-sub); 
+            text-decoration: underline; cursor: pointer; font-weight: 600;
         }
 
         /* --- GAME SCREEN --- */
-        #game-screen {
-            z-index: 10;
-        }
-
-        header {
-            background: white;
-            width: 100%;
-            padding: 20px 15px; 
-            text-align: center;
-            border-bottom: var(--border-width) solid black;
-            flex-shrink: 0;
-        }
-        
-        header h1 {
-            margin: 0;
-            font-size: 1.3rem; 
-            font-weight: 800; 
-            text-transform: uppercase;
-            color: #2d3436;
-        }
+        #game-screen { z-index: 20; }
 
         .score-pill {
-            background: white;
-            border: var(--border-width) solid black;
-            padding: 8px 25px;
-            border-radius: 50px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            margin: 20px auto; 
-            box-shadow: 3px 3px 0px black;
-            display: inline-block;
-            font-size: 1rem;
-        }
-        .score-container { text-align: center; }
-
-        .card-area {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            padding: 20px;
+            background: var(--text-main); color: var(--btn-yellow);
+            padding: 8px 25px; border-radius: 50px;
+            font-weight: 700; margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .flashcard {
-            background: white;
-            width: 85vw;
-            max-width: 320px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            width: 100%; max-width: 340px;
             aspect-ratio: 3/4;
-            max-height: 55vh;
-            border: var(--border-width) solid black;
-            border-radius: 25px;
-            box-shadow: 8px 8px 0px black;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 15px 35px var(--shadow);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; padding: 25px;
             position: relative;
+            margin-bottom: 30px;
         }
 
         .concept-badge {
-            background: #f1f2f6;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #636e72;
-            text-transform: uppercase;
+            background: rgba(108, 92, 231, 0.1); color: var(--bg-color);
+            padding: 6px 12px; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 800; text-transform: uppercase;
             margin-bottom: 20px;
-            letter-spacing: 0.5px;
         }
 
         .formula-display {
-            font-size: 1.8rem;
-            width: 100%;
-            overflow-x: auto;
-            padding: 10px 0;
+            font-size: 1.8rem; width: 100%; overflow-x: auto; padding: 10px 0;
+            color: var(--text-main);
         }
 
-        .controls {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            padding-bottom: 40px; 
-        }
+        .controls { display: flex; gap: 20px; justify-content: center; width: 100%; max-width: 300px; }
 
         .btn-circle {
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            border: var(--border-width) solid black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            cursor: pointer;
-            box-shadow: 4px 4px 0px black;
-            transition: all 0.1s;
+            width: 70px; height: 70px; border-radius: 50%;
+            border: 3px solid var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; cursor: pointer;
+            box-shadow: 0 6px 0 var(--text-main);
+            transition: all 0.1s; color: white;
         }
-        .btn-no { background: var(--btn-red); color: black; }
-        .btn-yes { background: var(--btn-green); color: black; }
-        .btn-circle:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px black;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: rgba(255,255,255,0.9);
-            padding-bottom: 15px;
-        }
+        .btn-no { background: var(--btn-red); }
+        .btn-yes { background: var(--btn-green); }
+        .btn-circle:active { transform: translateY(6px); box-shadow: none; }
 
         /* --- MODALS --- */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            backdrop-filter: blur(3px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 100;
         }
 
         .modal-box {
-            background: white;
-            width: 85%;
-            max-width: 320px;
-            border: var(--border-width) solid black;
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 8px 8px 0px black;
+            background: white; width: 85%; max-width: 320px;
+            border: 3px solid var(--text-main); border-radius: 24px;
+            padding: 30px; text-align: center;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.2);
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        @keyframes popIn {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-btn {
-            background: black;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 800;
-            margin-top: 15px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        
-        .instruction-list {
-            text-align: left;
-            margin: 15px 0;
-            padding-left: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #555;
-        }
         .instruction-item {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 15px; text-align: left; font-size: 14px; font-weight: 600; color: var(--text-main);
         }
         .icon-box {
-            width: 32px; 
-            height: 32px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            font-weight: 800;
-            border: 2px solid black;
-            flex-shrink: 0;
+            width: 35px; height: 35px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; border: 2px solid var(--text-main); flex-shrink: 0;
         }
 
+        /* MathJax Override */
         mjx-container { font-size: 115% !important; outline: none; }
-
     </style>
 </head>
 <body>
 
+    <div class="floating-icon icon-1">📐</div>
+    <div class="floating-icon icon-2">✖️</div>
+
     <div id="home-screen" class="screen">
-        
         <div class="home-card">
-            <div class="card-title">
-                <span style="font-size:1.6rem;">🚀</span>
-                <span>MATHEMATICS FLASHCARD</span>
-            </div>
-            <div class="card-subtitle">Select your subject to begin practice.</div>
+            <div style="font-size: 40px; margin-bottom: 10px;">🚀</div>
+            <h1>Mathematics Flashcard</h1>
+            <p>Select your subject to begin practice.</p>
 
-            <div class="input-group">
-                <label class="input-label">Class</label>
-                <div class="dropdown">Class 10</div>
-            </div>
+            <span class="label-text">CLASS</span>
+            <div class="static-input">Class 10</div>
 
-            <div class="input-group">
-                <label class="input-label">Subject</label>
-                <div class="dropdown">Mathematics</div>
-            </div>
+            <span class="label-text">SUBJECT</span>
+            <div class="static-input">Mathematics</div>
 
-            <button class="btn-yellow" onclick="showInstructions()">
-                LET'S GO! ▶
-            </button>
+            <button class="btn-main" onclick="showInstructions()">LET'S GO! ▶</button>
+            <a href="https://cbse-helper.vercel.app/" class="back-link">← Back to Dashboard</a>
         </div>
-        
-        <div class="footer" style="margin-top:auto;">Developed by ICM Educations</div>
     </div>
 
     <div id="game-screen" class="screen hidden-screen">
-        <header>
-            <h1>Mathematics Flashcard</h1>
-        </header>
+        <div class="score-pill">Score: <span id="score">0</span> / 10</div>
 
-        <div class="score-container">
-            <div class="score-pill">Score: <span id="score">0</span> / 10</div>
-        </div>
-
-        <div class="card-area">
-            <div id="card-container" class="flashcard">
-                <h2 style="color:#aaa;">Loading...</h2>
-            </div>
+        <div id="card-container" class="flashcard">
+            <h2 style="color:#aaa;">Loading...</h2>
         </div>
 
         <div class="controls">
-            <div class="btn-circle btn-no" onclick="handleInput(false)">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </div>
-            <div class="btn-circle btn-yes" onclick="handleInput(true)">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
+            <div class="btn-circle btn-no" onclick="handleInput(false)">✕</div>
+            <div class="btn-circle btn-yes" onclick="handleInput(true)">✔</div>
         </div>
         
-        <div class="footer">Developed by ICM Educations</div>
+        <div style="margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.8);">Developed by ICM Educations</div>
     </div>
 
     <div id="modal-instructions" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="margin-top:0; font-size: 1.5rem; font-weight:800; color: var(--btn-yellow); -webkit-text-stroke: 1.2px black; text-shadow: 2px 2px 0 black;">HOW TO PLAY</h2>
+            <h2 style="margin-top:0; color: var(--btn-yellow); -webkit-text-stroke: 1px var(--text-main);">HOW TO PLAY</h2>
             
-            <div class="instruction-list">
+            <div style="margin: 20px 0;">
                 <div class="instruction-item">
                     <div class="icon-box" style="background:white;">1</div>
                     <span>You will see 10 Formulas.</span>
                 </div>
                 <div class="instruction-item">
-                    <div class="icon-box" style="background:var(--btn-green);">✔</div>
+                    <div class="icon-box" style="background:var(--btn-green); color:white;">✔</div>
                     <span>Tap <b>Check</b> if it's Correct.</span>
                 </div>
                 <div class="instruction-item">
-                    <div class="icon-box" style="background:var(--btn-red);">✖</div>
+                    <div class="icon-box" style="background:var(--btn-red); color:white;">✕</div>
                     <span>Tap <b>Cross</b> if it's Wrong.</span>
                 </div>
             </div>
 
-            <button class="modal-btn" style="background:var(--btn-yellow); width:100%; border:2px solid black; box-shadow:4px 4px 0 black;" onclick="startGameFlow()">Start Now!</button>
+            <button class="btn-main" onclick="startGameFlow()">Start Now!</button>
         </div>
     </div>
 
     <div id="modal-correction" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="color:var(--btn-red); margin-top:0; font-weight:800; text-transform:uppercase;">Oops! ❌</h2>
-            <p style="font-size:0.9rem; font-weight: 600; color:#555;">The correct formula for<br><b id="modal-concept"></b> is:</p>
-            <div style="background:#f1f2f6; padding:10px; border-radius:10px; margin:10px 0; overflow-x:auto;">
+            <h2 style="color:var(--btn-red); margin-top:0;">Oops! ❌</h2>
+            <p>The correct formula for <b id="modal-concept"></b> is:</p>
+            <div style="background:#f1f2f6; padding:15px; border-radius:12px; margin:15px 0; overflow-x:auto;">
                 <div id="modal-answer"></div>
             </div>
-            <button class="modal-btn" onclick="closeModal()">Next Card</button>
+            <button class="btn-main" onclick="closeModal()">Next Card ➡</button>
         </div>
     </div>
 
     <div id="modal-finish" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="color:var(--btn-green); margin-top:0; font-weight:800;">YOU DID IT! 🎉</h2>
-            <p style="font-weight:600;">Your Final Score</p>
-            <div style="font-size:3.5rem; font-weight:800; margin:10px 0;">
+            <h2 style="color:var(--btn-green); margin-top:0;">YOU DID IT! 🎉</h2>
+            <p>Your Final Score</p>
+            <div style="font-size:3.5rem; font-weight:800; margin:10px 0; color: var(--text-main);">
                 <span id="final-score-val">0</span>
             </div>
-            <button class="modal-btn" style="background:var(--btn-yellow); color:black;" onclick="location.reload()">Play Again</button>
+            <button class="btn-main" onclick="location.reload()">Play Again 🔄</button>
+            <a href="https://cbse-helper.vercel.app/" class="back-link">← Back to Dashboard</a>
         </div>
     </div>
 
@@ -459,31 +281,24 @@
 
         async function startGameFlow() {
             document.getElementById('modal-instructions').style.display = 'none';
-            const btn = document.querySelector('.btn-yellow');
-            const originalText = btn.innerText;
-            btn.innerText = "Loading...";
             
+            // Animation to swap screens
+            const home = document.getElementById('home-screen');
+            home.style.transform = "translateY(-100%)";
+            setTimeout(() => home.classList.add('hidden-screen'), 400);
+
+            const game = document.getElementById('game-screen');
+            game.classList.remove('hidden-screen');
+            // Small delay to allow display:block to apply before transform
+            setTimeout(() => game.style.transform = "translateY(0)", 50);
+
             try {
-                if (API_URL.includes("PASTE_YOUR")) {
-                    alert("Developer Note: Please paste the Google Script URL in the code.");
-                    btn.innerText = originalText;
-                    return;
-                }
-
                 await fetchDeck(); 
-                
-                document.getElementById('home-screen').classList.add('hidden-screen'); 
-                document.getElementById('home-screen').style.transform = "translateY(-100%)";
-                
-                document.getElementById('game-screen').classList.remove('hidden-screen');
-                document.getElementById('game-screen').style.transform = "translateY(0)";
-                
                 renderCard();
-
             } catch (err) {
                 console.error(err);
                 alert("Could not load questions. Check connection.");
-                btn.innerText = originalText;
+                location.reload();
             }
         }
 
