@@ -12,7 +12,6 @@
 
     <style>
         :root {
-            /* Colors extracted from your screenshots */
             --bg-purple: #706fd3; 
             --dot-color: #95afc0; 
             
@@ -30,11 +29,11 @@
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            height: 100dvh; /* Dynamic viewport height */
+            height: 100dvh;
             overflow: hidden;
             color: var(--text-dark);
             
-            /* THE POLKA DOT BACKGROUND */
+            /* Polka Dot Background */
             background-color: var(--bg-purple);
             background-image: radial-gradient(#a29bfe 20%, transparent 20%), radial-gradient(#a29bfe 20%, transparent 20%);
             background-position: 0 0, 15px 15px;
@@ -44,7 +43,7 @@
             flex-direction: column;
         }
 
-        /* --- SCREEN VISIBILITY LOGIC --- */
+        /* --- SCREEN VISIBILITY --- */
         .screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -52,14 +51,21 @@
             flex-direction: column;
             transition: transform 0.4s ease-in-out;
         }
-        .hidden-screen { transform: translateY(100%); } /* Push off screen */
+        .hidden-screen { transform: translateY(100%); }
 
-        /* ==============================
-           SCREEN 1: WELCOME (HOME)
-           ============================== */
+        /* --- TYPOGRAPHY UPDATES --- */
+        /* This targets your main headings specifically */
+        h1, .welcome-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800; /* Extra Bold matching your screenshot */
+            letter-spacing: -0.5px; /* Slight tightening for that "Logo" feel */
+            color: #2d3436;
+        }
+
+        /* --- HOME SCREEN --- */
         #home-screen {
-            background-color: white; /* Fallback */
-            background: inherit; /* Use body polka dots */
+            background-color: white; 
+            background: inherit; 
             z-index: 20;
             padding: 20px;
             align-items: center;
@@ -78,7 +84,7 @@
         }
 
         .welcome-box {
-            background: #d1f2eb; /* Light Cyan */
+            background: #d1f2eb; 
             border: 2px solid black;
             border-radius: 15px;
             padding: 15px;
@@ -92,11 +98,12 @@
         
         .input-label {
             font-size: 0.8rem;
-            font-weight: 700;
+            font-weight: 800; /* Bolder label */
             color: #b2bec3;
             margin-bottom: 5px;
             display: block;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .dropdown {
@@ -117,7 +124,8 @@
             width: 100%;
             padding: 15px;
             font-size: 1.2rem;
-            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800; /* Extra Bold Button Text */
             border: var(--border-width) solid black;
             border-radius: 12px;
             box-shadow: 4px 4px 0px black;
@@ -130,45 +138,42 @@
             box-shadow: 2px 2px 0px black;
         }
 
-        /* ==============================
-           SCREEN 2: GAME FLASHCARD
-           ============================== */
+        /* --- GAME SCREEN --- */
         #game-screen {
             z-index: 10;
         }
 
-        /* Header Strip */
         header {
             background: white;
             width: 100%;
-            padding: 15px;
+            padding: 20px 15px; /* Slightly taller header */
             text-align: center;
             border-bottom: var(--border-width) solid black;
             flex-shrink: 0;
         }
+        
         header h1 {
             margin: 0;
-            font-size: 1.2rem;
-            font-weight: 800;
+            font-size: 1.3rem; /* Slightly larger */
+            font-weight: 800; /* Extra Bold */
             text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #2d3436;
         }
 
-        /* Score Pill */
         .score-pill {
             background: white;
             border: var(--border-width) solid black;
             padding: 8px 25px;
             border-radius: 50px;
-            font-weight: 800;
-            margin: 20px auto; /* Centers it */
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            margin: 20px auto; 
             box-shadow: 3px 3px 0px black;
             display: inline-block;
             font-size: 1rem;
         }
         .score-container { text-align: center; }
 
-        /* The Card */
         .card-area {
             flex-grow: 1;
             display: flex;
@@ -184,12 +189,9 @@
             max-width: 320px;
             aspect-ratio: 3/4;
             max-height: 55vh;
-            
             border: var(--border-width) solid black;
             border-radius: 25px;
-            /* The distinct hard shadow from your image */
             box-shadow: 8px 8px 0px black;
-            
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -201,13 +203,14 @@
 
         .concept-badge {
             background: #f1f2f6;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 8px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             color: #636e72;
             text-transform: uppercase;
             margin-bottom: 20px;
+            letter-spacing: 0.5px;
         }
 
         .formula-display {
@@ -217,12 +220,11 @@
             padding: 10px 0;
         }
 
-        /* Buttons (Red X and Green Check) */
         .controls {
             display: flex;
             gap: 30px;
             justify-content: center;
-            padding-bottom: 40px; /* Space from bottom */
+            padding-bottom: 40px; 
         }
 
         .btn-circle {
@@ -238,24 +240,22 @@
             box-shadow: 4px 4px 0px black;
             transition: all 0.1s;
         }
-
         .btn-no { background: var(--btn-red); color: black; }
         .btn-yes { background: var(--btn-green); color: black; }
-
         .btn-circle:active {
             transform: translate(2px, 2px);
             box-shadow: 2px 2px 0px black;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.8);
-            padding-bottom: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            padding-bottom: 15px;
         }
 
-        /* Modals (Pop style) */
+        /* --- MODALS --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -290,39 +290,39 @@
             border: none;
             padding: 12px 25px;
             border-radius: 12px;
-            font-weight: bold;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
             margin-top: 15px;
             cursor: pointer;
             text-transform: uppercase;
         }
         
-        /* Instruction List */
         .instruction-list {
             text-align: left;
             margin: 15px 0;
             padding-left: 10px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            font-weight: 600;
             color: #555;
         }
         .instruction-item {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .icon-box {
-            width: 30px; 
-            height: 30px; 
+            width: 32px; 
+            height: 32px; 
             border-radius: 50%; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            font-weight: bold;
+            font-weight: 800;
             border: 2px solid black;
             flex-shrink: 0;
         }
 
-        /* MathJax Override for size */
         mjx-container { font-size: 115% !important; outline: none; }
 
     </style>
@@ -330,7 +330,7 @@
 <body>
 
     <div id="home-screen" class="screen">
-        <h1 style="color:white; -webkit-text-stroke: 1px black; font-size: 2rem; margin-bottom: 30px; text-shadow: 3px 3px 0 black;">CBSE Mathematics Flashcard</h1>
+        <h1 style="color:white; -webkit-text-stroke: 1.5px black; font-size: 2.2rem; margin-bottom: 30px; text-shadow: 4px 4px 0 black; line-height: 1.2; text-align: center;">CBSE<br>QUESTION BANK</h1>
         
         <div class="home-card">
             <div class="welcome-box">
@@ -382,7 +382,7 @@
 
     <div id="modal-instructions" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="margin-top:0; font-weight:800; color: var(--btn-yellow); -webkit-text-stroke: 1px black;">HOW TO PLAY</h2>
+            <h2 style="margin-top:0; font-size: 1.5rem; font-weight:800; color: var(--btn-yellow); -webkit-text-stroke: 1.2px black; text-shadow: 2px 2px 0 black;">HOW TO PLAY</h2>
             
             <div class="instruction-list">
                 <div class="instruction-item">
@@ -406,7 +406,7 @@
     <div id="modal-correction" class="modal-overlay">
         <div class="modal-box">
             <h2 style="color:var(--btn-red); margin-top:0; font-weight:800; text-transform:uppercase;">Oops! ❌</h2>
-            <p style="font-size:0.9rem; color:#555;">The correct formula for<br><b id="modal-concept"></b> is:</p>
+            <p style="font-size:0.9rem; font-weight: 600; color:#555;">The correct formula for<br><b id="modal-concept"></b> is:</p>
             <div style="background:#f1f2f6; padding:10px; border-radius:10px; margin:10px 0; overflow-x:auto;">
                 <div id="modal-answer"></div>
             </div>
@@ -417,7 +417,7 @@
     <div id="modal-finish" class="modal-overlay">
         <div class="modal-box">
             <h2 style="color:var(--btn-green); margin-top:0; font-weight:800;">YOU DID IT! 🎉</h2>
-            <p>Your Final Score</p>
+            <p style="font-weight:600;">Your Final Score</p>
             <div style="font-size:3.5rem; font-weight:800; margin:10px 0;">
                 <span id="final-score-val">0</span>
             </div>
@@ -427,7 +427,7 @@
 
     <script>
         // ============================================
-        // 🚨 CONFIGURATION: API URL ADDED BELOW
+        // 🚨 CONFIGURATION
         // ============================================
         const API_URL = "https://script.google.com/macros/s/AKfycbwsWm_z9g6Nj39saH4e5PE_ei49a_EeuJakOEFTiMJL2YexpklA3GMmO4SR9PL1Vk2bCQ/exec"; 
         // ============================================
@@ -436,17 +436,12 @@
         let currentIndex = 0;
         let score = 0;
 
-        // 1. Show Instructions first
         function showInstructions() {
             document.getElementById('modal-instructions').style.display = 'flex';
         }
 
-        // 2. Start Game Process (Loading + Transition)
         async function startGameFlow() {
-            // Hide instruction modal
             document.getElementById('modal-instructions').style.display = 'none';
-
-            // Change button state to loading
             const btn = document.querySelector('.btn-yellow');
             const originalText = btn.innerText;
             btn.innerText = "Loading...";
@@ -458,9 +453,8 @@
                     return;
                 }
 
-                await fetchDeck(); // Fetch data
+                await fetchDeck(); 
                 
-                // Slide Transition
                 document.getElementById('home-screen').classList.add('hidden-screen'); 
                 document.getElementById('home-screen').style.transform = "translateY(-100%)";
                 
@@ -476,12 +470,9 @@
             }
         }
 
-        // Fetch Data
         async function fetchDeck() {
             const res = await fetch(API_URL);
             const data = await res.json();
-            
-            // Map data from CSV structure (ID, Unit, Concept, Correct, Distractor)
             gameDeck = data.map(row => {
                 const isMatch = Math.random() < 0.5;
                 return {
@@ -493,39 +484,30 @@
             });
         }
 
-        // Render Card
         function renderCard() {
             const container = document.getElementById('card-container');
-            
             if (currentIndex >= 10) {
                 endGame();
                 return;
             }
 
             const data = gameDeck[currentIndex];
-            
             container.innerHTML = `
                 <div class="concept-badge">${data.concept}</div>
                 <div class="formula-display">$$${data.display}$$</div>
-                <div style="margin-top:auto; font-size:0.9rem; color:#888;">Is this correct?</div>
+                <div style="margin-top:auto; font-size:0.9rem; font-weight:600; color:#888;">Is this correct?</div>
             `;
-            
-            // Re-render Latex
             MathJax.typesetPromise();
         }
 
-        // Handle Yes/No
         function handleInput(userYes) {
             const data = gameDeck[currentIndex];
-            
             if (userYes === data.isMatch) {
-                // Correct
                 score++;
                 document.getElementById('score').innerText = score;
                 currentIndex++;
                 renderCard();
             } else {
-                // Wrong -> Show Modal
                 document.getElementById('modal-concept').innerText = data.concept;
                 document.getElementById('modal-answer').innerHTML = `$$${data.correct}$$`;
                 document.getElementById('modal-correction').style.display = 'flex';
