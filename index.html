@@ -3,343 +3,489 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Math Flashcard</title>
+    <title>CBSE Mathematics Flashcard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         :root {
-            --primary: #6200ea;
-            --bg-color: #81d4fa; /* Light Blue */
+            /* Colors extracted from your screenshots */
+            --bg-purple: #706fd3; 
+            --dot-color: #95afc0; /* Light blueish dot */
+            
+            --btn-red: #ff6b6b;
+            --btn-green: #51cf66;
+            --btn-yellow: #feca57;
+            
+            --text-dark: #2d3436;
+            --border-width: 3px;
+            --shadow-depth: 5px;
         }
 
         * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(white 20%, transparent 20%);
-            background-size: 20px 20px; /* Polka dot pattern */
+            font-family: 'Poppins', sans-serif;
             margin: 0;
-            height: 100dvh; /* Adapts to mobile browser bars */
+            height: 100dvh; /* Dynamic viewport height */
+            overflow: hidden;
+            color: var(--text-dark);
+            
+            /* THE POLKA DOT BACKGROUND */
+            background-color: var(--bg-purple);
+            background-image: radial-gradient(#a29bfe 20%, transparent 20%), radial-gradient(#a29bfe 20%, transparent 20%);
+            background-position: 0 0, 15px 15px;
+            background-size: 30px 30px;
+            
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
-        /* --- HEADER --- */
+        /* --- SCREEN VISIBILITY LOGIC --- */
+        .screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s ease-in-out;
+        }
+        .hidden-screen { transform: translateY(100%); } /* Push off screen */
+
+        /* ==============================
+           SCREEN 1: WELCOME (HOME)
+           ============================== */
+        #home-screen {
+            background-color: white; /* Fallback */
+            background: inherit; /* Use body polka dots */
+            z-index: 20;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-card {
+            background: white;
+            width: 100%;
+            max-width: 340px;
+            border: var(--border-width) solid black;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow-depth) var(--shadow-depth) 0px black;
+        }
+
+        .welcome-box {
+            background: #d1f2eb; /* Light Cyan */
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        
+        .input-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #b2bec3;
+            margin-bottom: 5px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .dropdown {
+            width: 100%;
+            padding: 12px;
+            background: #f1f2f6;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: var(--text-dark);
+            outline: none;
+            appearance: none; /* Custom arrow could be added here */
+        }
+
+        .btn-yellow {
+            background: var(--btn-yellow);
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border: var(--border-width) solid black;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px black;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        .btn-yellow:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px black;
+        }
+
+        /* ==============================
+           SCREEN 2: GAME FLASHCARD
+           ============================== */
+        #game-screen {
+            z-index: 10;
+        }
+
+        /* Header Strip */
         header {
             background: white;
+            width: 100%;
             padding: 15px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-bottom: var(--border-width) solid black;
             flex-shrink: 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
             font-weight: 800;
+            text-transform: uppercase;
             letter-spacing: 1px;
-            color: #333;
         }
 
-        /* --- SCORE --- */
-        .score-board {
-            text-align: center;
-            margin: 10px 0;
-            flex-shrink: 0;
-        }
+        /* Score Pill */
         .score-pill {
             background: white;
-            border: 2px solid #333;
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-weight: bold;
+            border: var(--border-width) solid black;
+            padding: 8px 25px;
+            border-radius: 50px;
+            font-weight: 800;
+            margin: 20px auto; /* Centers it */
+            box-shadow: 3px 3px 0px black;
             display: inline-block;
-            box-shadow: 2px 2px 0px #333;
+            font-size: 1rem;
         }
+        .score-container { text-align: center; }
 
-        /* --- GAME AREA --- */
-        #game-area {
+        /* The Card */
+        .card-area {
             flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            width: 100%;
-            overflow: hidden;
-            padding: 10px;
-        }
-
-        /* The container for the cards */
-        .card-stack {
-            position: relative;
-            width: 100%;
-            max-width: 340px; /* Limits width on tablets */
-            aspect-ratio: 4/5; /* Keeps rectangular shape */
-            max-height: 65vh;
-        }
-
-        .card {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: white;
-            border: 3px solid #333;
-            border-radius: 20px;
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
             padding: 20px;
+        }
+
+        .flashcard {
+            background: white;
+            width: 85vw;
+            max-width: 320px;
+            aspect-ratio: 3/4;
+            max-height: 55vh;
+            
+            border: var(--border-width) solid black;
+            border-radius: 25px;
+            /* The distinct hard shadow from your image */
+            box-shadow: 8px 8px 0px black;
+            
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             text-align: center;
-            backface-visibility: hidden;
-            transition: transform 0.3s ease;
+            padding: 20px;
+            position: relative;
         }
 
-        .card h3 {
-            font-size: 1rem;
-            color: #555;
+        .concept-badge {
+            background: #f1f2f6;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #636e72;
             text-transform: uppercase;
             margin-bottom: 20px;
-            line-height: 1.4;
         }
 
-        /* !!! THE FIX FOR OVERFLOWING FORMULAS !!! */
-        .formula-box {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 30px;
+        .formula-display {
+            font-size: 1.8rem;
             width: 100%;
-            overflow-x: auto; /* Allows formula to scroll horizontally */
-            overflow-y: hidden;
-            white-space: nowrap;
-            padding-bottom: 10px; /* Space for scrollbar */
+            overflow-x: auto;
+            padding: 10px 0;
         }
 
-        /* Custom Scrollbar for the formula */
-        .formula-box::-webkit-scrollbar { height: 4px; }
-        .formula-box::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-
-        /* --- BUTTONS --- */
+        /* Buttons (Red X and Green Check) */
         .controls {
             display: flex;
+            gap: 30px;
             justify-content: center;
-            gap: 40px;
-            padding-bottom: 30px;
-            flex-shrink: 0;
+            padding-bottom: 40px; /* Space from bottom */
         }
 
-        .btn {
-            width: 70px;
-            height: 70px;
+        .btn-circle {
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
-            border: 3px solid #333;
-            font-size: 1.5rem;
+            border: var(--border-width) solid black;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 4px 4px 0px #333;
+            font-size: 2rem;
             cursor: pointer;
-            transition: transform 0.1s;
+            box-shadow: 4px 4px 0px black;
+            transition: all 0.1s;
         }
-        
-        .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #333; }
-        .btn-no { background: #ffcdd2; color: #d50000; }
-        .btn-yes { background: #c8e6c9; color: #2e7d32; }
 
-        .btn-start {
-            background: var(--primary);
+        .btn-no { background: var(--btn-red); color: black; }
+        .btn-yes { background: var(--btn-green); color: black; }
+
+        .btn-circle:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px black;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.8);
+            padding-bottom: 10px;
+        }
+
+        /* Modals (Pop style) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-box {
+            background: white;
+            width: 80%;
+            max-width: 300px;
+            border: var(--border-width) solid black;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 8px 8px 0px black;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-btn {
+            background: black;
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
+            padding: 10px 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
         }
 
-        /* --- MODALS --- */
-        .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-        }
+        /* MathJax Override for size */
+        mjx-container { font-size: 115% !important; outline: none; }
 
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 320px;
-            text-align: center;
-        }
-
-        .correct-answer {
-            background: #e8f5e9;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            color: #2e7d32;
-            overflow-x: auto; /* Handles long answers in modal */
-        }
-        
-        /* MathJax Override for Mobile */
-        mjx-container { font-size: 100% !important; }
     </style>
 </head>
 <body>
 
-    <header>MATH FLASHCARD</header>
-    
-    <div class="score-board">
-        <div class="score-pill">Score: <span id="score">0</span> / 10</div>
-    </div>
-
-    <div id="game-area">
-        <div class="card-stack" id="stack">
-            
-            <div id="start-card" class="card" style="z-index: 10;">
-                <h2 style="color:var(--primary)">Ready?</h2>
-                <p>10 Random Questions</p>
-                <p style="color:#666; font-size:0.9rem;">Tap Check (✔) if the formula is Correct.<br>Tap Cross (✖) if it is Wrong.</p>
-                <button class="btn-start" onclick="startGame()">Start</button>
+    <div id="home-screen" class="screen">
+        <h1 style="color:white; -webkit-text-stroke: 1px black; font-size: 2rem; margin-bottom: 30px; text-shadow: 3px 3px 0 black;">CBSE Mathematics Flashcard</h1>
+        
+        <div class="home-card">
+            <div class="welcome-box">
+                <div style="font-size:0.9rem; color:#666;"></div>
+                <div style="font-size:1.4rem; font-weight:800;">👋 Hello!!!</div>
             </div>
 
+            <div class="input-group">
+                <label class="input-label">Class</label>
+                <div class="dropdown">Class 10</div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Subject</label>
+                <div class="dropdown">Mathematics</div>
+            </div>
+
+            <button class="btn-yellow" onclick="goToGame()">LET'S GO! ▶</button>
+        </div>
+        
+        <div class="footer" style="margin-top:auto;">Developed by ICM Educations</div>
+    </div>
+
+    <div id="game-screen" class="screen hidden-screen">
+        <header>
+            <h1>Mathematics Flashcard</h1>
+        </header>
+
+        <div class="score-container">
+            <div class="score-pill">Score: <span id="score">0</span> / 10</div>
+        </div>
+
+        <div class="card-area">
+            <div id="card-container" class="flashcard">
+                <h2 style="color:#aaa;">Loading...</h2>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="btn-circle btn-no" onclick="handleInput(false)">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+            <div class="btn-circle btn-yes" onclick="handleInput(true)">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+        </div>
+        
+        <div class="footer">Developed by ICM Educations</div>
+    </div>
+
+    <div id="modal-correction" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="color:var(--btn-red); margin-top:0; font-weight:800; text-transform:uppercase;">Oops! ❌</h2>
+            <p style="font-size:0.9rem; color:#555;">The correct formula for<br><b id="modal-concept"></b> is:</p>
+            <div style="background:#f1f2f6; padding:10px; border-radius:10px; margin:10px 0; overflow-x:auto;">
+                <div id="modal-answer"></div>
+            </div>
+            <button class="modal-btn" onclick="closeModal()">Next Card</button>
         </div>
     </div>
 
-    <div class="controls" id="controls" style="visibility: hidden;">
-        <button class="btn btn-no" onclick="handleInput(false)">✖</button>
-        <button class="btn btn-yes" onclick="handleInput(true)">✔</button>
-    </div>
-
-    <div id="correction-modal" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #d50000; margin-top:0;">Oops!</h2>
-            <p>The correct formula for <br><b id="modal-title"></b> is:</p>
-            <div class="correct-answer" id="modal-formula"></div>
-            <button class="btn-start" onclick="closeModal()" style="padding:10px 30px; font-size:1rem;">Next</button>
-        </div>
-    </div>
-
-    <div id="finish-modal" class="modal">
-        <div class="modal-content">
-            <h2 style="color: var(--primary);">Quiz Done!</h2>
-            <div style="font-size:3rem; font-weight:bold; margin:20px 0;">
-                <span id="final-score">0</span><span style="font-size:1.5rem; color:#999">/10</span>
+    <div id="modal-finish" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="color:var(--btn-green); margin-top:0; font-weight:800;">YOU DID IT! 🎉</h2>
+            <p>Your Final Score</p>
+            <div style="font-size:3.5rem; font-weight:800; margin:10px 0;">
+                <span id="final-score-val">0</span>
             </div>
-            <button class="btn-start" onclick="location.reload()">Play Again</button>
+            <button class="modal-btn" style="background:var(--btn-yellow); color:black;" onclick="location.reload()">Play Again</button>
         </div>
     </div>
 
     <script>
-        // ===========================================
-        // 🚨 PASTE GOOGLE APPS SCRIPT URL HERE
-        // ===========================================
-        const API_URL = "PASTE_YOUR_WEB_APP_URL_HERE"; 
-        // ===========================================
+        // ============================================
+        // 🚨 CONFIGURATION: API URL ADDED BELOW
+        // ============================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbwsWm_z9g6Nj39saH4e5PE_ei49a_EeuJakOEFTiMJL2YexpklA3GMmO4SR9PL1Vk2bCQ/exec"; 
+        // ============================================
 
-        let deck = [];
-        let index = 0;
+        let gameDeck = [];
+        let currentIndex = 0;
         let score = 0;
 
-        async function startGame() {
-            const btn = document.querySelector('.btn-start');
+        // UI Transition
+        async function goToGame() {
+            const btn = document.querySelector('.btn-yellow');
+            const originalText = btn.innerText;
             btn.innerText = "Loading...";
             
             try {
-                if(API_URL.includes("PASTE_YOUR")) throw new Error("Missing API URL");
-                
-                const res = await fetch(API_URL);
-                const data = await res.json();
-                
-                // Prepare Data
-                deck = data.map(item => ({
-                    concept: item.concept,
-                    // 50% chance of True vs False
-                    display: Math.random() < 0.5 ? item.correct_formula : item.distractor_formula,
-                    correct: item.correct_formula,
-                    isMatch: false // We set this properly next line
-                }));
+                if (API_URL.includes("PASTE_YOUR")) {
+                    alert("Developer Note: Please paste the Google Script URL in the code.");
+                    btn.innerText = originalText;
+                    return;
+                }
 
-                // Fix isMatch logic
-                deck.forEach(card => {
-                    card.isMatch = (card.display === card.correct);
-                });
-
-                document.getElementById('start-card').style.display = 'none';
-                document.getElementById('controls').style.visibility = 'visible';
+                await fetchDeck(); // Fetch data
+                
+                // Slide Transition
+                document.getElementById('home-screen').classList.add('hidden-screen'); // Slide Home Up/Out (Optional logic) or just hide
+                document.getElementById('home-screen').style.transform = "translateY(-100%)";
+                
+                document.getElementById('game-screen').classList.remove('hidden-screen');
+                document.getElementById('game-screen').style.transform = "translateY(0)";
+                
                 renderCard();
 
-            } catch (e) {
-                alert("Error: Check your API URL or Internet.");
-                console.error(e);
-                btn.innerText = "Start";
+            } catch (err) {
+                console.error(err);
+                alert("Could not load questions. Check connection.");
+                btn.innerText = originalText;
             }
         }
 
-        function renderCard() {
-            const stack = document.getElementById('stack');
-            // clear old play cards
-            stack.querySelectorAll('.play-card').forEach(e => e.remove());
+        // Fetch Data
+        async function fetchDeck() {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            
+            // Map data from CSV structure (ID, Unit, Concept, Correct, Distractor)
+            gameDeck = data.map(row => {
+                const isMatch = Math.random() < 0.5;
+                return {
+                    concept: row.concept,
+                    display: isMatch ? row.correct_formula : row.distractor_formula,
+                    correct: row.correct_formula,
+                    isMatch: isMatch
+                };
+            });
+        }
 
-            if(index >= 10) {
-                document.getElementById('finish-modal').style.display = 'flex';
-                document.getElementById('final-score').innerText = score;
+        // Render Card
+        function renderCard() {
+            const container = document.getElementById('card-container');
+            
+            if (currentIndex >= 10) {
+                endGame();
                 return;
             }
 
-            const data = deck[index];
-            const card = document.createElement('div');
-            card.className = 'card play-card';
-            // Animation
-            card.style.animation = 'popIn 0.3s ease-out';
+            const data = gameDeck[currentIndex];
             
-            card.innerHTML = `
-                <h3>${data.concept}</h3>
-                <div class="formula-box">$$${data.display}$$</div>
-                <div style="font-size:0.8rem; color:#999; margin-top:auto;">Is this correct?</div>
+            container.innerHTML = `
+                <div class="concept-badge">${data.concept}</div>
+                <div class="formula-display">$$${data.display}$$</div>
+                <div style="margin-top:auto; font-size:0.9rem; color:#888;">Is this correct?</div>
             `;
-
-            stack.appendChild(card);
+            
+            // Re-render Latex
             MathJax.typesetPromise();
         }
 
+        // Handle Yes/No
         function handleInput(userYes) {
-            const card = deck[index];
-            if(userYes === card.isMatch) {
+            const data = gameDeck[currentIndex];
+            
+            if (userYes === data.isMatch) {
+                // Correct
                 score++;
                 document.getElementById('score').innerText = score;
-                index++;
+                currentIndex++;
                 renderCard();
             } else {
-                showCorrection(card);
+                // Wrong -> Show Modal
+                document.getElementById('modal-concept').innerText = data.concept;
+                document.getElementById('modal-answer').innerHTML = `$$${data.correct}$$`;
+                document.getElementById('modal-correction').style.display = 'flex';
+                MathJax.typesetPromise();
             }
         }
 
-        function showCorrection(card) {
-            document.getElementById('correction-modal').style.display = 'flex';
-            document.getElementById('modal-title').innerText = card.concept;
-            document.getElementById('modal-formula').innerHTML = `$$${card.correct}$$`;
-            MathJax.typesetPromise();
-        }
-
         function closeModal() {
-            document.getElementById('correction-modal').style.display = 'none';
-            index++;
+            document.getElementById('modal-correction').style.display = 'none';
+            currentIndex++;
             renderCard();
         }
-    </script>
 
-    <style>
-        @keyframes popIn {
-            0% { transform: scale(0.9); opacity:0; }
-            100% { transform: scale(1); opacity:1; }
+        function endGame() {
+            document.getElementById('final-score-val').innerText = score + "/10";
+            document.getElementById('modal-finish').style.display = 'flex';
         }
-    </style>
+
+    </script>
 </body>
 </html>
