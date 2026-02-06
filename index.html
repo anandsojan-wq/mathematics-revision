@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CBSE Math Flash</title>
+    <title>Math Flashcard</title>
     
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -11,200 +11,156 @@
     <style>
         :root {
             --primary: #6200ea;
-            --success: #00c853;
-            --danger: #d50000;
-            --bg-color: #e0f7fa; /* Light blueish tint */
-            --card-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            --bg-color: #81d4fa; /* Light Blue */
         }
 
-        * {
-            box-sizing: border-box; /* Crucial for mobile sizing */
-        }
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
-            /* Polka dot pattern similar to your screenshot */
-            background-image: radial-gradient(#80deea 20%, transparent 20%), radial-gradient(#80deea 20%, transparent 20%);
-            background-position: 0 0, 10px 10px;
-            background-size: 20px 20px;
-            
+            background-image: radial-gradient(white 20%, transparent 20%);
+            background-size: 20px 20px; /* Polka dot pattern */
             margin: 0;
-            height: 100vh; /* Fallback */
-            height: 100dvh; /* Dynamic height for mobile browsers */
-            overflow: hidden; /* Prevent scrolling */
-            
+            height: 100dvh; /* Adapts to mobile browser bars */
             display: flex;
             flex-direction: column;
-            align-items: center;
+            overflow: hidden;
         }
 
         /* --- HEADER --- */
         header {
-            width: 100%;
-            padding: 15px;
             background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
             text-align: center;
-            z-index: 20;
-            flex-shrink: 0; /* Prevent header from squishing */
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 1.1rem;
-            color: #333;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-shrink: 0;
             font-weight: 800;
+            letter-spacing: 1px;
+            color: #333;
         }
 
-        /* --- SCORE BUBBLE --- */
-        .score-container {
-            margin: 15px 0 5px 0;
-            z-index: 10;
+        /* --- SCORE --- */
+        .score-board {
+            text-align: center;
+            margin: 10px 0;
+            flex-shrink: 0;
         }
-        
         .score-pill {
             background: white;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             border: 2px solid #333;
-            font-size: 0.9rem;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            box-shadow: 2px 2px 0px #333;
         }
 
-        /* --- GAME AREA (The Container) --- */
+        /* --- GAME AREA --- */
         #game-area {
-            flex-grow: 1; /* Take up remaining space */
-            width: 100%;
+            flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            padding: 20px;
+            width: 100%;
+            overflow: hidden;
+            padding: 10px;
         }
 
-        /* --- THE CARD STACK --- */
-        #card-stack {
-            width: 85vw; /* 85% of screen width */
-            max-width: 350px;
-            aspect-ratio: 3/4; /* Maintains rectangle shape */
-            max-height: 60vh;
+        /* The container for the cards */
+        .card-stack {
             position: relative;
+            width: 100%;
+            max-width: 340px; /* Limits width on tablets */
+            aspect-ratio: 4/5; /* Keeps rectangular shape */
+            max-height: 65vh;
         }
 
         .card {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: white;
+            border: 3px solid #333;
             border-radius: 20px;
-            box-shadow: var(--card-shadow);
-            border: 2px solid #333; /* Cartoon style border */
-            
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 20px;
-            
-            /* Animation */
-            transition: transform 0.3s ease, opacity 0.2s;
             backface-visibility: hidden;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* Card Content Styling */
-        .concept-tag {
-            background: #f5f5f5;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 15px;
-            text-transform: uppercase;
+            transition: transform 0.3s ease;
         }
 
         .card h3 {
-            margin: 0 0 20px 0;
-            color: #333;
-            font-size: 1.1rem; /* Smaller font for mobile */
+            font-size: 1rem;
+            color: #555;
+            text-transform: uppercase;
+            margin-bottom: 20px;
             line-height: 1.4;
-            width: 100%;
-            word-wrap: break-word; /* Prevents overflow */
         }
 
+        /* !!! THE FIX FOR OVERFLOWING FORMULAS !!! */
         .formula-box {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             width: 100%;
-            overflow-x: auto; /* Adds scroll if formula is massive */
+            overflow-x: auto; /* Allows formula to scroll horizontally */
             overflow-y: hidden;
-            padding: 10px 0;
+            white-space: nowrap;
+            padding-bottom: 10px; /* Space for scrollbar */
         }
 
-        .helper-text {
-            font-size: 0.9rem;
-            color: #888;
-            margin-top: auto;
-        }
+        /* Custom Scrollbar for the formula */
+        .formula-box::-webkit-scrollbar { height: 4px; }
+        .formula-box::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
         /* --- BUTTONS --- */
         .controls {
-            flex-shrink: 0;
-            padding-bottom: 30px;
             display: flex;
-            gap: 30px;
-            z-index: 20;
+            justify-content: center;
+            gap: 40px;
+            padding-bottom: 30px;
+            flex-shrink: 0;
         }
 
-        .btn-circle {
+        .btn {
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            border: 2px solid #333;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #333; /* 3D effect */
+            border: 3px solid #333;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 4px 4px 0px #333;
+            cursor: pointer;
+            transition: transform 0.1s;
         }
-
-        .btn-no { background: #ff8a80; color: #333; }
-        .btn-yes { background: #69f0ae; color: #333; }
-
-        .btn-circle:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #333;
-        }
+        
+        .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #333; }
+        .btn-no { background: #ffcdd2; color: #d50000; }
+        .btn-yes { background: #c8e6c9; color: #2e7d32; }
 
         .btn-start {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(98, 0, 234, 0.3);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         /* --- MODALS --- */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             display: none;
             justify-content: center;
             align-items: center;
@@ -212,195 +168,178 @@
             padding: 20px;
             backdrop-filter: blur(5px);
         }
-        
+
         .modal-content {
             background: white;
             padding: 25px;
-            border-radius: 20px;
-            text-align: center;
+            border-radius: 15px;
             width: 100%;
             max-width: 320px;
-            animation: slideUp 0.3s ease;
+            text-align: center;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .correct-answer-box {
-            background: #e0f2f1;
-            border: 2px dashed #009688;
-            border-radius: 10px;
+        .correct-answer {
+            background: #e8f5e9;
             padding: 15px;
+            border-radius: 8px;
             margin: 15px 0;
-            color: #00695c;
-            overflow-x: auto;
+            color: #2e7d32;
+            overflow-x: auto; /* Handles long answers in modal */
         }
-
-        /* MathJax Override */
-        mjx-container { font-size: 110% !important; outline: none; }
+        
+        /* MathJax Override for Mobile */
+        mjx-container { font-size: 100% !important; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Mathematics Flashcard</h1>
-    </header>
-
-    <div class="score-container">
+    <header>MATH FLASHCARD</header>
+    
+    <div class="score-board">
         <div class="score-pill">Score: <span id="score">0</span> / 10</div>
     </div>
 
     <div id="game-area">
-        <div id="card-stack">
-            <div id="start-screen" class="card" style="z-index: 50;">
-                <h3 style="font-size: 1.5rem; color: var(--primary);">Ready?</h3>
-                <p style="color:#555;">10 Random Questions<br>from your Syllabus.</p>
-                <p style="font-size: 0.9rem; color:#777; margin-bottom: 20px;">
-                    Tap <b>✔</b> if Correct<br>
-                    Tap <b>✖</b> if Wrong
-                </p>
-                <button class="btn-start" onclick="startGame()">Start Quiz</button>
+        <div class="card-stack" id="stack">
+            
+            <div id="start-card" class="card" style="z-index: 10;">
+                <h2 style="color:var(--primary)">Ready?</h2>
+                <p>10 Random Questions</p>
+                <p style="color:#666; font-size:0.9rem;">Tap Check (✔) if the formula is Correct.<br>Tap Cross (✖) if it is Wrong.</p>
+                <button class="btn-start" onclick="startGame()">Start</button>
             </div>
-            </div>
-    </div>
 
-    <div class="controls" id="controls" style="visibility: hidden;">
-        <button class="btn-circle btn-no" onclick="handleInput(false)">✖</button>
-        <button class="btn-circle btn-yes" onclick="handleInput(true)">✔</button>
-    </div>
-
-    <div id="modal-correction" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #d32f2f; margin-top:0;">Oops!</h2>
-            <p style="font-size:0.9rem; color:#555;">The correct formula for<br><b id="modal-concept"></b> is:</p>
-            <div class="correct-answer-box" id="modal-answer"></div>
-            <button class="btn-start" style="background:#333; font-size:0.9rem;" onclick="closeModal()">Next Card</button>
         </div>
     </div>
 
-    <div id="modal-finish" class="modal">
+    <div class="controls" id="controls" style="visibility: hidden;">
+        <button class="btn btn-no" onclick="handleInput(false)">✖</button>
+        <button class="btn btn-yes" onclick="handleInput(true)">✔</button>
+    </div>
+
+    <div id="correction-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #d50000; margin-top:0;">Oops!</h2>
+            <p>The correct formula for <br><b id="modal-title"></b> is:</p>
+            <div class="correct-answer" id="modal-formula"></div>
+            <button class="btn-start" onclick="closeModal()" style="padding:10px 30px; font-size:1rem;">Next</button>
+        </div>
+    </div>
+
+    <div id="finish-modal" class="modal">
         <div class="modal-content">
             <h2 style="color: var(--primary);">Quiz Done!</h2>
-            <p>Your Final Score</p>
-            <div style="font-size: 3rem; font-weight: 800; margin: 10px 0;">
-                <span id="final-score-val">0</span><span style="font-size:1.5rem; color:#999;">/10</span>
+            <div style="font-size:3rem; font-weight:bold; margin:20px 0;">
+                <span id="final-score">0</span><span style="font-size:1.5rem; color:#999">/10</span>
             </div>
             <button class="btn-start" onclick="location.reload()">Play Again</button>
         </div>
     </div>
 
     <script>
-        // ---------------------------------------------------------
-        // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL BELOW
-        // ---------------------------------------------------------
+        // ===========================================
+        // 🚨 PASTE GOOGLE APPS SCRIPT URL HERE
+        // ===========================================
         const API_URL = "PASTE_YOUR_WEB_APP_URL_HERE"; 
-        // ---------------------------------------------------------
+        // ===========================================
 
-        let gameDeck = [];
-        let currentIndex = 0;
+        let deck = [];
+        let index = 0;
         let score = 0;
 
         async function startGame() {
             const btn = document.querySelector('.btn-start');
             btn.innerText = "Loading...";
-            btn.disabled = true;
-
+            
             try {
-                // If user forgot to paste URL
-                if(API_URL.includes("PASTE_YOUR")) {
-                    alert("Please open the code and paste your Google Script URL!");
-                    btn.innerText = "Start Quiz";
-                    btn.disabled = false;
-                    return;
-                }
+                if(API_URL.includes("PASTE_YOUR")) throw new Error("Missing API URL");
+                
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                
+                // Prepare Data
+                deck = data.map(item => ({
+                    concept: item.concept,
+                    // 50% chance of True vs False
+                    display: Math.random() < 0.5 ? item.correct_formula : item.distractor_formula,
+                    correct: item.correct_formula,
+                    isMatch: false // We set this properly next line
+                }));
 
-                await fetchDeck();
-                
-                document.getElementById('start-screen').style.display = 'none';
+                // Fix isMatch logic
+                deck.forEach(card => {
+                    card.isMatch = (card.display === card.correct);
+                });
+
+                document.getElementById('start-card').style.display = 'none';
                 document.getElementById('controls').style.visibility = 'visible';
-                
                 renderCard();
 
-            } catch (err) {
-                console.error(err);
-                alert("Error connecting to database. Check your internet.");
-                btn.innerText = "Start Quiz";
-                btn.disabled = false;
+            } catch (e) {
+                alert("Error: Check your API URL or Internet.");
+                console.error(e);
+                btn.innerText = "Start";
             }
-        }
-
-        async function fetchDeck() {
-            const res = await fetch(API_URL);
-            const data = await res.json();
-
-            // Transform data: ID, Unit, Concept, Correct, Distractor
-            gameDeck = data.map(row => {
-                const isMatch = Math.random() < 0.5; // 50/50 chance
-                return {
-                    concept: row.concept,
-                    display: isMatch ? row.correct_formula : row.distractor_formula,
-                    correct: row.correct_formula,
-                    isMatch: isMatch
-                };
-            });
         }
 
         function renderCard() {
-            const container = document.getElementById('card-stack');
-            
-            // Remove old play cards
-            const oldCards = container.querySelectorAll('.play-card');
-            oldCards.forEach(c => c.remove());
+            const stack = document.getElementById('stack');
+            // clear old play cards
+            stack.querySelectorAll('.play-card').forEach(e => e.remove());
 
-            if (currentIndex >= 10) {
-                endGame();
+            if(index >= 10) {
+                document.getElementById('finish-modal').style.display = 'flex';
+                document.getElementById('final-score').innerText = score;
                 return;
             }
 
-            const data = gameDeck[currentIndex];
-            
+            const data = deck[index];
             const card = document.createElement('div');
             card.className = 'card play-card';
+            // Animation
+            card.style.animation = 'popIn 0.3s ease-out';
+            
             card.innerHTML = `
-                <div class="concept-tag">Topic: ${data.concept.substring(0, 15)}...</div>
                 <h3>${data.concept}</h3>
                 <div class="formula-box">$$${data.display}$$</div>
-                <div class="helper-text">Is this Correct?</div>
+                <div style="font-size:0.8rem; color:#999; margin-top:auto;">Is this correct?</div>
             `;
-            
-            container.appendChild(card);
+
+            stack.appendChild(card);
             MathJax.typesetPromise();
         }
 
         function handleInput(userYes) {
-            const data = gameDeck[currentIndex];
-            if (userYes === data.isMatch) {
+            const card = deck[index];
+            if(userYes === card.isMatch) {
                 score++;
                 document.getElementById('score').innerText = score;
-                currentIndex++;
+                index++;
                 renderCard();
             } else {
-                // Show Correction Modal
-                document.getElementById('modal-concept').innerText = data.concept;
-                document.getElementById('modal-answer').innerHTML = $$${data.correct}$$;
-                document.getElementById('modal-correction').style.display = 'flex';
-                MathJax.typesetPromise();
+                showCorrection(card);
             }
         }
 
-        function closeModal() {
-            document.getElementById('modal-correction').style.display = 'none';
-            currentIndex++;
-            renderCard();
+        function showCorrection(card) {
+            document.getElementById('correction-modal').style.display = 'flex';
+            document.getElementById('modal-title').innerText = card.concept;
+            document.getElementById('modal-formula').innerHTML = `$$${card.correct}$$`;
+            MathJax.typesetPromise();
         }
 
-        function endGame() {
-            document.getElementById('controls').style.visibility = 'hidden';
-            document.getElementById('final-score-val').innerText = score;
-            document.getElementById('modal-finish').style.display = 'flex';
+        function closeModal() {
+            document.getElementById('correction-modal').style.display = 'none';
+            index++;
+            renderCard();
         }
     </script>
+
+    <style>
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity:0; }
+            100% { transform: scale(1); opacity:1; }
+        }
+    </style>
 </body>
 </html>
